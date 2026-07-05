@@ -15,6 +15,7 @@
   const KEYS = {
     age: 'mms_age',
     sound: 'mms_sound',
+    music: 'mms_music',
     contrast: 'mms_contrast',
     motion: 'mms_reduceMotion',
     data: 'mms_progress'
@@ -56,6 +57,7 @@
   const state = {
     age: localStorage.getItem(KEYS.age) || null,
     sound: localStorage.getItem(KEYS.sound) !== 'false',
+    music: localStorage.getItem(KEYS.music) !== 'false',
     contrast: localStorage.getItem(KEYS.contrast) === 'true',
     motion: localStorage.getItem(KEYS.motion) === 'true',
     data: safeParseData(localStorage.getItem(KEYS.data)),
@@ -84,7 +86,87 @@
   }
 
   /* ============================================================
-     SONIDOS — Web Audio API (sin archivos externos)
+     RUTAS DE ARCHIVOS DE AUDIO REALES (OPCIONAL)
+     ------------------------------------------------------------
+     Si subís archivos de audio reales a la carpeta /assets/, la
+     app los va a usar automáticamente en lugar de los sonidos
+     sintetizados. Si un archivo no existe o falla, cae solo al
+     sonido generado (no rompe nada).
+
+     Estructura de carpetas esperada junto a index.html:
+       assets/sounds/animals/*.mp3
+       assets/sounds/fx/*.mp3
+       assets/music/background.mp3   (música de fondo continua)
+     ============================================================ */
+  const SOUND_FILES = {
+    // Animalitos
+    duck: 'assets/sounds/animals/duck.mp3',
+    dog: 'assets/sounds/animals/dog.mp3',
+    cat: 'assets/sounds/animals/cat.mp3',
+    cow: 'assets/sounds/animals/cow.mp3',
+    frog: 'assets/sounds/animals/frog.mp3',
+    sheep: 'assets/sounds/animals/sheep.mp3',
+    bird: 'assets/sounds/animals/bird.mp3',
+    horse: 'assets/sounds/animals/horse.mp3',
+    // Sonidos / efectos
+    bell: 'assets/sounds/fx/bell.mp3',
+    drum: 'assets/sounds/fx/drum.mp3',
+    rain: 'assets/sounds/fx/rain.mp3',
+    bubble: 'assets/sounds/fx/bubble.mp3',
+    clap: 'assets/sounds/fx/clap.mp3',
+    wind: 'assets/sounds/fx/wind.mp3',
+    laugh: 'assets/sounds/fx/laugh.mp3',
+    sparkle: 'assets/sounds/fx/sparkle.mp3',
+    correct: 'assets/sounds/fx/correct.mp3',
+    error: 'assets/sounds/fx/error.mp3',
+    applause: 'assets/sounds/fx/applause.mp3',
+    endGame: 'assets/sounds/fx/endgame.mp3'
+  };
+
+  const fileAudioCache = {};
+
+  /**
+   * Intenta reproducir un archivo de audio real. Si no existe, no carga,
+   * o el navegador lo bloquea, ejecuta automáticamente synthFn() (el
+   * sonido generado por Web Audio) como respaldo. Nunca deja a la app
+   * en silencio por un archivo faltante.
+   */
+  function playFileOrSynth(fileKey, synthFn) {
+    if (!state.sound) return;
+    const path = SOUND_FILES[fileKey];
+    if (!path) { synthFn(); return; }
+
+    let settled = false;
+    const fallback = () => {
+      if (settled) return;
+      settled = true;
+      synthFn();
+    };
+
+    try {
+      let audio = fileAudioCache[fileKey];
+      if (!audio) {
+        audio = new Audio(path);
+        audio.preload = 'none';
+        fileAudioCache[fileKey] = audio;
+      } else {
+        audio.currentTime = 0;
+      }
+      audio.volume = 0.9;
+      const playPromise = audio.play();
+      if (playPromise && typeof playPromise.then === 'function') {
+        playPromise.then(() => { settled = true; }).catch(fallback);
+      } else {
+        settled = true;
+      }
+      audio.onerror = fallback;
+    } catch (e) {
+      fallback();
+    }
+  }
+
+  /* ============================================================
+     SONIDOS — Web Audio API (respaldo sin archivos externos)
      ============================================================ */
   let audioCtx = null;
   function getCtx() {
@@ -136,42 +218,37 @@
   }
 
   const Sounds = {
-    correct() {
-      tone({ freq: 523.25, duration: 0.15 });
-      tone({ freq: 659.25, duration: 0.2, delay: 0.12 });
-    },
+    correct() { playFileOrSynth('correct', () => { tone({ freq: 523.25, duration: 0.15 }); tone({ freq: 659.25, duration: 0.2, delay: 0.12 }); }); },
     discovery() {
       tone({ freq: 392, duration: 0.12 });
       tone({ freq: 494, duration: 0.12, delay: 0.1 });
       tone({ freq: 659, duration: 0.25, delay: 0.2 });
     },
     applause() {
-      for (let i = 0; i < 5; i++) {
-        noiseBurst({ delay: i * 0.09, duration: 0.08, filterFreq: 1800 + Math.random() * 800, volume: 0.1 });
-      }
+      playFileOrSynth('applause', () => {
+        for (let i = 0; i < 5; i++) {
+          noiseBurst({ delay: i * 0.09, duration: 0.08, filterFreq: 1800 + Math.random() * 800, volume: 0.1 });
+        }
+      });
     },
-    error() {
-      tone({ freq: 320, duration: 0.22, type: 'sine', glideTo: 250, volume: 0.14 });
-    },
-    endGame() {
-      [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => tone({ freq: f, duration: 0.2, delay: i * 0.15 }));
-    },
-    bell() { tone({ freq: 1046.5, duration: 0.6, type: 'triangle', volume: 0.15 }); },
-    drum() { tone({ freq: 110, duration: 0.18, type: 'sine', volume: 0.3 }); noiseBurst({ duration: 0.1, volume: 0.1, filterFreq: 200 }); },
-    rain() { for (let i = 0; i < 6; i++) noiseBurst({ delay: i * 0.06, duration: 0.12, filterFreq: 3000 + Math.random() * 2000, volume: 0.06 }); },
-    bird() { tone({ freq: 1500, duration: 0.08, glideTo: 2200 }); tone({ freq: 1800, duration: 0.1, delay: 0.12, glideTo: 1400 }); },
-    clap() { noiseBurst({ duration: 0.06, filterFreq: 2500, volume: 0.2 }); },
-    bubble() { tone({ freq: 300, duration: 0.2, glideTo: 900, volume: 0.15 }); },
-    wind() { for (let i = 0; i < 3; i++) noiseBurst({ delay: i * 0.25, duration: 0.5, filterFreq: 500 + Math.random() * 300, volume: 0.05 }); },
-    laugh() { [700, 850, 750, 900].forEach((f, i) => tone({ freq: f, duration: 0.1, delay: i * 0.11, type: 'triangle', volume: 0.1 })); },
-    sparkle() { [1046, 1318, 1568, 2093].forEach((f, i) => tone({ freq: f, duration: 0.12, delay: i * 0.08, type: 'triangle', volume: 0.08 })); },
-    duck() { tone({ freq: 300, duration: 0.15, type: 'square', volume: 0.08, glideTo: 220 }); },
-    dog() { tone({ freq: 200, duration: 0.12, type: 'square', volume: 0.12 }); tone({ freq: 180, duration: 0.12, delay: 0.15, type: 'square', volume: 0.12 }); },
-    cat() { tone({ freq: 700, duration: 0.2, type: 'sine', glideTo: 900, volume: 0.12 }); },
-    cow() { tone({ freq: 150, duration: 0.4, type: 'sawtooth', volume: 0.08, glideTo: 130 }); },
-    frog() { tone({ freq: 250, duration: 0.1, type: 'square', volume: 0.1 }); tone({ freq: 250, duration: 0.1, delay: 0.13, type: 'square', volume: 0.1 }); },
-    sheep() { tone({ freq: 320, duration: 0.14, type: 'sine', volume: 0.1, glideTo: 260 }); tone({ freq: 300, duration: 0.14, delay: 0.16, type: 'sine', volume: 0.1, glideTo: 240 }); },
-    horse() { tone({ freq: 180, duration: 0.18, type: 'sawtooth', volume: 0.1, glideTo: 280 }); tone({ freq: 260, duration: 0.15, delay: 0.2, type: 'sawtooth', volume: 0.08, glideTo: 160 }); },
+    error() { playFileOrSynth('error', () => { tone({ freq: 320, duration: 0.22, type: 'sine', glideTo: 250, volume: 0.14 }); }); },
+    endGame() { playFileOrSynth('endGame', () => { [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => tone({ freq: f, duration: 0.2, delay: i * 0.15 })); }); },
+    bell() { playFileOrSynth('bell', () => { tone({ freq: 1046.5, duration: 0.6, type: 'triangle', volume: 0.15 }); }); },
+    drum() { playFileOrSynth('drum', () => { tone({ freq: 110, duration: 0.18, type: 'sine', volume: 0.3 }); noiseBurst({ duration: 0.1, volume: 0.1, filterFreq: 200 }); }); },
+    rain() { playFileOrSynth('rain', () => { for (let i = 0; i < 6; i++) noiseBurst({ delay: i * 0.06, duration: 0.12, filterFreq: 3000 + Math.random() * 2000, volume: 0.06 }); }); },
+    bird() { playFileOrSynth('bird', () => { tone({ freq: 1500, duration: 0.08, glideTo: 2200 }); tone({ freq: 1800, duration: 0.1, delay: 0.12, glideTo: 1400 }); }); },
+    clap() { playFileOrSynth('clap', () => { noiseBurst({ duration: 0.06, filterFreq: 2500, volume: 0.2 }); }); },
+    bubble() { playFileOrSynth('bubble', () => { tone({ freq: 300, duration: 0.2, glideTo: 900, volume: 0.15 }); }); },
+    wind() { playFileOrSynth('wind', () => { for (let i = 0; i < 3; i++) noiseBurst({ delay: i * 0.25, duration: 0.5, filterFreq: 500 + Math.random() * 300, volume: 0.05 }); }); },
+    laugh() { playFileOrSynth('laugh', () => { [700, 850, 750, 900].forEach((f, i) => tone({ freq: f, duration: 0.1, delay: i * 0.11, type: 'triangle', volume: 0.1 })); }); },
+    sparkle() { playFileOrSynth('sparkle', () => { [1046, 1318, 1568, 2093].forEach((f, i) => tone({ freq: f, duration: 0.12, delay: i * 0.08, type: 'triangle', volume: 0.08 })); }); },
+    duck() { playFileOrSynth('duck', () => { tone({ freq: 300, duration: 0.15, type: 'square', volume: 0.08, glideTo: 220 }); }); },
+    dog() { playFileOrSynth('dog', () => { tone({ freq: 200, duration: 0.12, type: 'square', volume: 0.12 }); tone({ freq: 180, duration: 0.12, delay: 0.15, type: 'square', volume: 0.12 }); }); },
+    cat() { playFileOrSynth('cat', () => { tone({ freq: 700, duration: 0.2, type: 'sine', glideTo: 900, volume: 0.12 }); }); },
+    cow() { playFileOrSynth('cow', () => { tone({ freq: 150, duration: 0.4, type: 'sawtooth', volume: 0.08, glideTo: 130 }); }); },
+    frog() { playFileOrSynth('frog', () => { tone({ freq: 250, duration: 0.1, type: 'square', volume: 0.1 }); tone({ freq: 250, duration: 0.1, delay: 0.13, type: 'square', volume: 0.1 }); }); },
+    sheep() { playFileOrSynth('sheep', () => { tone({ freq: 320, duration: 0.14, type: 'sine', volume: 0.1, glideTo: 260 }); tone({ freq: 300, duration: 0.14, delay: 0.16, type: 'sine', volume: 0.1, glideTo: 240 }); }); },
+    horse() { playFileOrSynth('horse', () => { tone({ freq: 180, duration: 0.18, type: 'sawtooth', volume: 0.1, glideTo: 280 }); tone({ freq: 260, duration: 0.15, delay: 0.2, type: 'sawtooth', volume: 0.08, glideTo: 160 }); }); },
     color(id) {
       const map = {
         yellow: () => tone({ freq: 880, duration: 0.3, type: 'triangle', volume: 0.12 }),
@@ -179,7 +256,8 @@
         red: () => { tone({ freq: 300, duration: 0.12, type: 'sine', volume: 0.14 }); tone({ freq: 300, duration: 0.12, delay: 0.2, type: 'sine', volume: 0.14 }); },
         green: () => noiseBurst({ duration: 0.3, volume: 0.08, filterFreq: 2200 }),
         purple: () => tone({ freq: 600, duration: 0.3, type: 'triangle', volume: 0.12, glideTo: 800 }),
-        orange: () => { tone({ freq: 300, duration: 0.1, type: 'sine', volume: 0.14 }); tone({ freq: 220, duration: 0.15, delay: 0.12, type: 'sine', volume: 0.12 }); }
+        orange: () => { tone({ freq: 300, duration: 0.1, type: 'sine', volume: 0.14 }); tone({ freq: 220, duration: 0.15, delay: 0.12, type: 'sine', volume: 0.12 }); },
+        skyblue: () => { tone({ freq: 500, duration: 0.3, type: 'sine', volume: 0.1, glideTo: 620 }); noiseBurst({ delay: 0.1, duration: 0.25, volume: 0.05, filterFreq: 2600 }); }
       };
       (map[id] || (() => {}))();
     }
@@ -249,6 +327,41 @@
   })();
 
   /* ============================================================
+     MÚSICA DE FONDO CONTINUA (independiente del Modo Canción)
+     ------------------------------------------------------------
+     Reproduce en loop assets/music/background.mp3 en volumen bajo
+     mientras se navega por la app. Se activa recién con el primer
+     toque del usuario (los navegadores bloquean el autoplay sin
+     interacción). Tiene su propio botón de silencio en la barra
+     superior, independiente del botón de efectos de sonido.
+     ============================================================ */
+  const bgMusic = document.getElementById('bg-music');
+  let bgMusicUnlocked = false;
+  let bgMusicHasFile = true;
+
+  if (bgMusic) {
+    bgMusic.volume = 0.22;
+    bgMusic.addEventListener('error', () => { bgMusicHasFile = false; });
+  }
+
+  function updateBgMusicPlayback() {
+    if (!bgMusic || !bgMusicHasFile) return;
+    if (state.music && bgMusicUnlocked) {
+      bgMusic.play().catch(() => {});
+    } else {
+      bgMusic.pause();
+    }
+  }
+
+  function unlockBgMusicOnce() {
+    if (bgMusicUnlocked || !bgMusic) return;
+    bgMusicUnlocked = true;
+    if (bgMusic.preload === 'none') bgMusic.preload = 'auto';
+    updateBgMusicPlayback();
+  }
+  document.addEventListener('click', unlockBgMusicOnce, { once: true, capture: true });
+
+  /* ============================================================
      NAVEGACIÓN ENTRE PANTALLAS
      ============================================================ */
   function showScreen(id) {
@@ -268,9 +381,10 @@
   }
 
   /* ============================================================
-     PREFERENCIAS: sonido / contraste / movimiento
+     PREFERENCIAS: sonido / música / contraste / movimiento
      ============================================================ */
   const btnSound = document.getElementById('btn-sound');
+  const btnMusic = document.getElementById('btn-music');
   const btnContrast = document.getElementById('btn-contrast');
   const btnMotion = document.getElementById('btn-motion');
 
@@ -281,6 +395,12 @@
     btnSound.setAttribute('aria-pressed', String(state.sound));
     btnSound.querySelector('.tool-icon').textContent = state.sound ? '🔊' : '🔇';
     btnSound.setAttribute('aria-label', state.sound ? 'Sonido activado. Tocar para silenciar' : 'Sonido silenciado. Tocar para activar');
+
+    if (btnMusic) {
+      btnMusic.setAttribute('aria-pressed', String(state.music));
+      btnMusic.querySelector('.tool-icon').textContent = state.music ? '🎵' : '🎵🚫';
+      btnMusic.setAttribute('aria-label', state.music ? 'Música de fondo activada. Tocar para silenciar' : 'Música de fondo silenciada. Tocar para activar');
+    }
 
     btnContrast.setAttribute('aria-pressed', String(state.contrast));
     btnContrast.setAttribute('aria-label', state.contrast ? 'Alto contraste activado. Tocar para desactivar' : 'Activar alto contraste');
@@ -296,6 +416,15 @@
     if (!state.sound) LoopEngine.stop();
     if (state.sound) Sounds.discovery();
   });
+
+  if (btnMusic) {
+    btnMusic.addEventListener('click', () => {
+      state.music = !state.music;
+      localStorage.setItem(KEYS.music, String(state.music));
+      applyPreferences();
+      updateBgMusicPlayback();
+    });
+  }
 
   btnContrast.addEventListener('click', () => {
     state.contrast = !state.contrast;
@@ -412,14 +541,18 @@
 
   /* ============================================================
      MUNDO DE COLORES
+     Cada color está asociado a un objeto real y concreto (estilo
+     Montessori: el color no es abstracto, se ancla a un objeto
+     reconocible del mundo real).
      ============================================================ */
   const COLORS = [
-    { id: 'yellow', name: 'Amarillo', icon: '☀️' },
-    { id: 'blue', name: 'Azul', icon: '💧' },
-    { id: 'red', name: 'Rojo', icon: '❤️' },
-    { id: 'green', name: 'Verde', icon: '🍃' },
-    { id: 'purple', name: 'Violeta', icon: '⭐' },
-    { id: 'orange', name: 'Naranja', icon: '⚽' }
+    { id: 'yellow', name: 'Amarillo', icon: '🐥' },     // patito amarillo
+    { id: 'blue', name: 'Azul', icon: '🟦' },           // cuadrado azul
+    { id: 'red', name: 'Rojo', icon: '🎈' },            // globo rojo
+    { id: 'green', name: 'Verde', icon: '🍃' },         // hoja verde
+    { id: 'purple', name: 'Violeta', icon: '🍇' },      // uvas violetas
+    { id: 'orange', name: 'Naranja', icon: '🍊' },      // naranja (fruta)
+    { id: 'skyblue', name: 'Celeste', icon: '🌊' }      // mar celeste
   ];
 
   let colorsMode = 'explore';
@@ -428,7 +561,7 @@
   function colorsCountForAge() {
     if (state.age === '0-12') return 3;
     if (state.age === '1-2') return 4;
-    return 6;
+    return 7;
   }
 
   function initColorsWorld() {
@@ -462,7 +595,11 @@
       instructions.textContent = 'Tocá el color que suena';
       colorsListenTarget = shown[Math.floor(Math.random() * shown.length)];
       listenBtn.hidden = false;
-      listenBtn.onclick = () => Sounds.color(colorsListenTarget.id);
+      // Aseguramos que el contexto de audio esté "despierto" apenas se
+      // arma el tablero, y de nuevo en cada click (fix del bug de
+      // "Escuchar" sin sonido en el modo escucha).
+      getCtx();
+      listenBtn.onclick = () => { getCtx(); Sounds.color(colorsListenTarget.id); };
     } else {
       instructions.textContent = 'Tocá un color';
       listenBtn.hidden = true;
@@ -475,6 +612,7 @@
       btn.setAttribute('aria-label', color.name);
       btn.innerHTML = `<span class="icon" aria-hidden="true">${color.icon}</span><span>${color.name}</span>`;
       btn.addEventListener('click', () => {
+        getCtx();
         if (colorsMode === 'listen') {
           if (color.id === colorsListenTarget.id) {
             btn.classList.add('touched');
@@ -669,7 +807,8 @@
     animalListenTarget = animalGameOptions.find((a) => a.id === targetId);
     prompt.textContent = 'Escuchá y elegí el animalito';
     listenBtn.hidden = false;
-    listenBtn.onclick = () => animalListenTarget.sound();
+    getCtx();
+    listenBtn.onclick = () => { getCtx(); animalListenTarget.sound(); };
 
     const board = document.getElementById('animals-board');
     board.innerHTML = '';
@@ -1500,6 +1639,7 @@
      INICIALIZACIÓN
      ============================================================ */
   applyPreferences();
+  updateBgMusicPlayback();
   if (state.age) renderMenu();
   showScreen('screen-welcome');
 })();
