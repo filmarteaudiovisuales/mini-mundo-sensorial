@@ -1,5 +1,6 @@
 /* ============================================================
-   Mini Mundo Sensorial — estilos
+   Mini Mundo Sensorial — Filmarte Escuela Creativa
+   Desarrollado por Digital Carmelo
    Mobile-first, formas grandes, colores cálidos, alto contraste
    y modo reducir movimiento incluidos.
    ============================================================ */
@@ -51,11 +52,18 @@ body.contrast .btn,
 body.contrast .game-card,
 body.contrast .card,
 body.contrast .age-card,
-body.contrast .figure-btn,
+body.contrast .color-btn,
 body.contrast .sound-btn,
 body.contrast .animal-btn,
-body.contrast .shape-btn {
+body.contrast .shape-btn,
+body.contrast .mode-btn,
+body.contrast .modal-box {
   border: 3px solid #FFFFFF;
+}
+
+body.contrast .brand-kicker,
+body.contrast .dev-credit {
+  opacity: 1;
 }
 
 /* ---------- Reducir movimiento ---------- */
@@ -79,6 +87,8 @@ body.reduce-motion *::after {
 /* ---------- Reset básico ---------- */
 * { box-sizing: border-box; }
 
+[hidden] { display: none !important; }
+
 html { scroll-behavior: smooth; }
 
 body {
@@ -91,10 +101,11 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
-h1, h2, h3 { line-height: 1.2; margin: 0 0 0.5em; }
+h1, h2, h3, h4 { line-height: 1.2; margin: 0 0 0.5em; }
 h1 { font-size: 1.9rem; }
 h2 { font-size: 1.5rem; }
 h3 { font-size: 1.15rem; }
+h4 { font-size: 1rem; }
 p { margin: 0 0 0.75em; }
 
 button { font-family: inherit; cursor: pointer; }
@@ -184,13 +195,28 @@ main {
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-soft);
   padding: 1.75em 1.5em;
-  margin: 0 auto;
+  margin: 0 auto 1em;
   max-width: 640px;
 }
 
 .hero { text-align: center; }
+.brand-kicker {
+  margin: 0 0 0.35em;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--color-primary-dark);
+  opacity: 0.85;
+}
 .subtitle { font-size: 1.1rem; color: var(--color-text-soft); font-weight: 600; }
 .intro-text { color: var(--color-text-soft); }
+.dev-credit {
+  margin: 1.25em 0 0;
+  font-size: 0.75rem;
+  color: var(--color-text-soft);
+  opacity: 0.7;
+}
 
 .actions {
   display: flex;
@@ -266,11 +292,18 @@ main {
 }
 
 /* ---------- Guía para adultos ---------- */
+.guide-age-block {
+  background: var(--color-info-bg);
+  border-radius: var(--radius-md);
+  padding: 0.9em 1em;
+  margin-bottom: 0.75em;
+}
 .tips-list { list-style: none; padding: 0; margin: 0 0 1em; }
 .tips-list li {
   padding: 0.5em 0.25em;
   border-bottom: 1px dashed rgba(0,0,0,0.1);
 }
+.guide-age-block .tips-list li { border-bottom-color: rgba(0,0,0,0.06); }
 .notice {
   background: var(--color-info-bg);
   border-radius: var(--radius-md);
@@ -308,7 +341,7 @@ main {
 .age-title { font-size: 1.2rem; font-weight: 700; }
 .age-desc { color: var(--color-text-soft); font-size: 0.95rem; }
 
-/* ---------- Menú de juegos ---------- */
+/* ---------- Menú principal ---------- */
 .menu-header {
   display: flex;
   align-items: center;
@@ -332,6 +365,9 @@ main {
 
 @media (min-width: 600px) {
   .games-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (min-width: 900px) {
+  .games-grid { grid-template-columns: 1fr 1fr 1fr; }
 }
 
 .game-card {
@@ -361,7 +397,7 @@ main {
   font-size: 0.85rem;
 }
 
-/* ---------- Pantallas de juego (genérico) ---------- */
+/* ---------- Pantallas de mundo (genérico) ---------- */
 .game-instructions {
   font-size: 1.2rem;
   font-weight: 700;
@@ -385,44 +421,30 @@ main {
 }
 .game-message.is-retry { color: var(--color-primary-dark); }
 
-/* ---------- Juego 1: Tocá y Descubrí ---------- */
-.figures-board {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1em;
-  margin: 1.25em 0;
-}
-@media (min-width: 560px) {
-  .figures-board { grid-template-columns: repeat(4, 1fr); }
-}
-
-.figure-btn {
-  aspect-ratio: 1;
+.mode-switcher {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 3rem;
-  background: var(--color-bg-card);
-  border: 3px solid var(--color-accent);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-soft);
-  transition: transform var(--transition-slow), box-shadow var(--transition-fast);
+  flex-wrap: wrap;
+  gap: 0.5em;
+  margin-bottom: 1em;
 }
-.figure-btn:hover { box-shadow: var(--shadow-soft-hover); }
-.figure-btn.touched {
-  animation: pop-bounce 0.6s ease;
-  border-color: var(--color-success);
-  background: var(--color-success-bg);
+.mode-btn {
+  border: 2px solid var(--color-secondary);
+  background: #fff;
+  color: var(--color-text);
+  border-radius: 999px;
+  padding: 0.5em 1em;
+  font-weight: 700;
+  font-size: 0.9rem;
+  min-height: 44px;
 }
-
-@keyframes pop-bounce {
-  0% { transform: scale(1); }
-  35% { transform: scale(1.18) rotate(-4deg); }
-  60% { transform: scale(0.95) rotate(3deg); }
-  100% { transform: scale(1) rotate(0); }
+.mode-btn[aria-pressed="true"] {
+  background: var(--color-secondary);
+  color: #142A33;
 }
 
-/* ---------- Juego 2: Sonidos Mágicos ---------- */
+/* ---------- Grillas de tarjetas (colores, animalitos, sonidos, formas) ---------- */
+.colors-board,
+.animal-board,
 .sounds-board {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -430,43 +452,13 @@ main {
   margin: 1.25em 0;
 }
 @media (min-width: 560px) {
+  .colors-board,
+  .animal-board,
   .sounds-board { grid-template-columns: repeat(3, 1fr); }
 }
 
-.sound-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.3em;
-  padding: 1em 0.5em;
-  background: var(--color-bg-card);
-  border: 3px solid var(--color-secondary);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-soft);
-  font-weight: 700;
-  transition: transform var(--transition-fast);
-}
-.sound-btn .icon { font-size: 2.6rem; }
-.sound-btn.playing { animation: wiggle 0.5s ease; }
-.sound-btn.done { border-color: var(--color-success); }
-
-@keyframes wiggle {
-  0%, 100% { transform: rotate(0); }
-  25% { transform: rotate(-6deg) scale(1.05); }
-  75% { transform: rotate(6deg) scale(1.05); }
-}
-
-/* ---------- Juego 3: Encontrá el Animalito ---------- */
-.animal-board {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1em;
-  margin: 1.25em 0;
-}
-@media (min-width: 560px) {
-  .animal-board { grid-template-columns: repeat(3, 1fr); }
-}
-
+.color-btn,
+.sound-btn,
 .animal-btn {
   display: flex;
   flex-direction: column;
@@ -474,22 +466,45 @@ main {
   gap: 0.3em;
   padding: 1.1em 0.5em;
   background: var(--color-bg-card);
-  border: 3px solid var(--color-primary);
+  border: 3px solid var(--color-secondary);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-soft);
   font-weight: 700;
+  transition: transform var(--transition-fast);
 }
-.animal-btn .icon { font-size: 2.8rem; }
-.animal-btn.correct { background: var(--color-success-bg); border-color: var(--color-success); animation: pop-bounce 0.6s ease; }
-.animal-btn.retry { animation: shake 0.5s ease; }
+.color-btn .icon,
+.sound-btn .icon,
+.animal-btn .icon { font-size: 2.6rem; }
 
+.color-btn.touched,
+.sound-btn.playing,
+.animal-btn.correct {
+  animation: pop-bounce 0.6s ease;
+  border-color: var(--color-success);
+  background: var(--color-success-bg);
+}
+.sound-btn.done { border-color: var(--color-success); }
+.animal-btn.retry,
+.color-btn.retry { animation: shake 0.5s ease; }
+
+.sound-btn.memory-highlight { border-color: var(--color-accent); background: var(--color-info-bg); }
+.sound-btn.memory-correct { border-color: var(--color-success); background: var(--color-success-bg); }
+
+@keyframes pop-bounce {
+  0% { transform: scale(1); }
+  35% { transform: scale(1.18) rotate(-4deg); }
+  60% { transform: scale(0.95) rotate(3deg); }
+  100% { transform: scale(1) rotate(0); }
+}
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
   25% { transform: translateX(-6px); }
   75% { transform: translateX(6px); }
 }
 
-/* ---------- Juego 4: Parejas de Formas ---------- */
+.memory-controls { margin-bottom: 1em; }
+
+/* ---------- Mundo de Formas ---------- */
 .shapes-board {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -512,9 +527,130 @@ main {
   box-shadow: var(--shadow-soft);
   transition: transform var(--transition-fast);
 }
+.shape-btn.shape-small { font-size: 1.4rem; }
 .shape-btn.selected { border-color: var(--color-accent); background: var(--color-info-bg); transform: scale(1.05); }
 .shape-btn.matched { border-color: var(--color-success); background: var(--color-success-bg); opacity: 0.85; }
+.shape-btn.touched { animation: pop-bounce 0.6s ease; border-color: var(--color-success); }
 .shape-btn.retry { animation: shake 0.5s ease; }
+
+/* ---------- Modo Canción / controles compartidos ---------- */
+.song-tracks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75em;
+  margin-bottom: 1em;
+}
+.song-track-btn[aria-pressed="true"] {
+  background: var(--color-primary);
+  color: #fff;
+}
+.song-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75em;
+  margin: 1em 0;
+}
+
+/* ---------- Modo Calma ---------- */
+.calm-scene {
+  position: relative;
+  min-height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, #E3F2FD 0%, #FFF8F0 100%);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  overflow: hidden;
+  margin-bottom: 1em;
+}
+body.contrast .calm-scene { background: #10121A; }
+
+.calm-cloud {
+  position: absolute;
+  top: 1.5em;
+  left: 1.5em;
+  font-size: 2.5rem;
+  animation: float-slow 8s ease-in-out infinite;
+}
+.calm-moon {
+  position: absolute;
+  top: 1.5em;
+  right: 1.5em;
+  font-size: 2.2rem;
+  animation: float-slow 9s ease-in-out infinite reverse;
+}
+.calm-bubble {
+  position: absolute;
+  font-size: 1.6rem;
+  bottom: 1em;
+  animation: float-up 6s ease-in-out infinite;
+}
+.calm-bubble-1 { left: 20%; animation-delay: 0s; }
+.calm-bubble-2 { left: 65%; animation-delay: 2s; }
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(12px); }
+}
+@keyframes float-up {
+  0% { transform: translateY(0); opacity: 0.4; }
+  50% { opacity: 1; }
+  100% { transform: translateY(-90px); opacity: 0; }
+}
+
+.breathing-circle {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: var(--color-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1em;
+  font-weight: 700;
+  color: #142A33;
+  font-size: 0.95rem;
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.3s ease;
+}
+.breathing-circle.breathing-active {
+  animation: breathe 8s ease-in-out infinite;
+}
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.35); }
+}
+
+.calm-text {
+  text-align: center;
+  color: var(--color-text-soft);
+  font-weight: 600;
+}
+
+/* ---------- Mini Recorrido Sensorial ---------- */
+.journey-progress {
+  width: 100%;
+  height: 16px;
+  background: var(--color-info-bg);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 0.5em;
+}
+.journey-bar-fill {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: 999px;
+  transition: width var(--transition-slow);
+  width: 0%;
+}
+.journey-step-label {
+  text-align: center;
+  font-weight: 700;
+  color: var(--color-text-soft);
+  margin-bottom: 1em;
+}
 
 /* ---------- Diploma / pantalla final ---------- */
 .diploma {
@@ -522,6 +658,8 @@ main {
   border: 4px dashed var(--color-accent);
 }
 .diploma-icons { font-size: 2rem; }
+.diploma-brand { font-weight: 700; color: var(--color-primary-dark); margin-top: 1em; }
+.diploma-dev { font-size: 0.85rem; color: var(--color-text-soft); }
 
 .cta-section {
   max-width: 640px;
@@ -533,9 +671,40 @@ main {
   text-align: center;
 }
 
-.screen#screen-final .actions {
+#screen-final .actions {
   max-width: 640px;
   margin: 1.5em auto 0;
+}
+
+/* ---------- Modal de confirmación ---------- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(62, 54, 72, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1em;
+  z-index: 1000;
+}
+.modal-overlay.hidden { display: none; }
+.modal-box {
+  background: var(--color-bg-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft-hover);
+  padding: 1.75em 1.5em;
+  max-width: 420px;
+  text-align: center;
+}
+.modal-title { font-size: 1.2rem; font-weight: 700; }
+.modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75em;
+  margin-top: 1em;
+}
+@media (min-width: 420px) {
+  .modal-actions { flex-direction: row; justify-content: center; }
 }
 
 /* ---------- Footer ---------- */
@@ -548,7 +717,7 @@ main {
 
 /* ---------- Impresión (diploma) ---------- */
 @media print {
-  .topbar, .app-footer, .no-print { display: none !important; }
+  .topbar, .app-footer, .no-print, .modal-overlay { display: none !important; }
   main { max-width: 100%; padding: 0; }
   #screen-final { display: block !important; }
   .diploma {
