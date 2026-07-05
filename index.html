@@ -17,6 +17,9 @@
     <button type="button" id="btn-sound" class="tool-btn" aria-pressed="true" aria-label="Sonido activado. Tocar para silenciar">
       <span class="tool-icon" aria-hidden="true">🔊</span><span class="tool-text">Sonido</span>
     </button>
+    <button type="button" id="btn-music" class="tool-btn" aria-pressed="true" aria-label="Música de fondo activada. Tocar para silenciar">
+      <span class="tool-icon" aria-hidden="true">🎵</span><span class="tool-text">Música</span>
+    </button>
     <button type="button" id="btn-contrast" class="tool-btn" aria-pressed="false" aria-label="Activar alto contraste">
       <span class="tool-icon" aria-hidden="true">◐</span><span class="tool-text">Contraste</span>
     </button>
@@ -25,6 +28,8 @@
     </button>
   </div>
 </header>
+
+<audio id="bg-music" src="assets/music/background.mp3" loop preload="none"></audio>
 
 <main id="main">
 
