@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Mini Mundo Sensorial · Juegos para peques de 0 a 3 años</title>
-<meta name="description" content="Mini Mundo Sensorial: juegos simples, coloridos y sonoros de estimulación temprana para jugar en compañía de un adulto. Sin datos personales, sin internet necesario.">
+<title>Mini Mundo Sensorial · Filmarte Escuela Creativa</title>
+<meta name="description" content="Mini Mundo Sensorial, una experiencia de Filmarte Escuela Creativa: colores, animalitos, sonidos, formas, canciones y un momento de calma para jugar con peques de 0 a 3 años en compañía de un adulto. Sin datos personales, sin internet necesario.">
 <meta name="theme-color" content="#FF8A65">
 <link rel="stylesheet" href="style.css">
 </head>
@@ -12,7 +12,7 @@
 <a class="skip-link" href="#main">Saltar al contenido principal</a>
 
 <header class="topbar">
-  <div class="brand">🌈 <span>Mini Mundo Sensorial</span></div>
+  <div class="brand">🌈 <span>Filmarte Escuela Creativa</span></div>
   <div class="toolbar" role="toolbar" aria-label="Preferencias de accesibilidad">
     <button type="button" id="btn-sound" class="tool-btn" aria-pressed="true" aria-label="Sonido activado. Tocar para silenciar">
       <span class="tool-icon" aria-hidden="true">🔊</span><span class="tool-text">Sonido</span>
@@ -31,13 +31,15 @@
   <!-- 1. BIENVENIDA -->
   <section id="screen-welcome" class="screen" tabindex="-1">
     <div class="card hero">
+      <p class="brand-kicker">Una experiencia de Filmarte Escuela Creativa</p>
       <h1 id="welcome-title">Mini Mundo Sensorial 🌈</h1>
-      <p class="subtitle">Juegos simples, coloridos y sonoros para compartir con peques de 0 a 3 años.</p>
-      <p class="intro-text">Una experiencia para jugar con acompañamiento adulto, estimular la curiosidad y descubrir formas, sonidos y animalitos.</p>
+      <p class="subtitle">Ocho mundos simples, coloridos y sonoros para compartir con peques de 0 a 3 años.</p>
+      <p class="intro-text">Una experiencia para jugar con acompañamiento adulto: tocar colores, escuchar animalitos, descubrir formas, cantar y respirar juntos.</p>
       <div class="actions">
         <button type="button" id="btn-start" class="btn btn-primary btn-large">Empezar a jugar ▶</button>
         <button type="button" class="btn btn-secondary btn-large" data-nav="screen-guide">Guía para adultos 📖</button>
       </div>
+      <p class="dev-credit">Desarrollado por Digital Carmelo</p>
     </div>
   </section>
 
@@ -47,7 +49,31 @@
       <button type="button" class="btn btn-back no-print" data-nav="screen-welcome">← Volver</button>
       <h2>Guía para adultos 👪</h2>
       <p>Mini Mundo Sensorial está pensado para jugar en compañía de una persona adulta. La idea es compartir, nombrar colores, formas, sonidos y celebrar cada descubrimiento.</p>
-      <h3>Algunas recomendaciones</h3>
+
+      <h3>Recomendaciones según la edad</h3>
+      <div class="guide-age-block">
+        <h4>🍼 0 a 12 meses</h4>
+        <ul class="tips-list">
+          <li>Tocar, mirar, escuchar y repetir sonidos suaves junto a tu bebé.</li>
+          <li>No exigir respuestas: alcanza con acompañar y observar.</li>
+        </ul>
+      </div>
+      <div class="guide-age-block">
+        <h4>🧸 1 a 2 años</h4>
+        <ul class="tips-list">
+          <li>Nombrar en voz alta los animales, colores y formas que aparecen.</li>
+          <li>Invitar a elegir entre dos opciones simples ("¿tocamos el sol o la gota?").</li>
+        </ul>
+      </div>
+      <div class="guide-age-block">
+        <h4>🚀 2 a 3 años</h4>
+        <ul class="tips-list">
+          <li>Hacer preguntas simples ("¿dónde está...?") y esperar con paciencia.</li>
+          <li>Invitar a buscar, imitar sonidos y asociar animalitos con sus sonidos.</li>
+        </ul>
+      </div>
+
+      <h3>Algunas recomendaciones generales</h3>
       <ul class="tips-list">
         <li><span aria-hidden="true">🕐</span> Usar sesiones cortas.</li>
         <li><span aria-hidden="true">🗣️</span> Acompañar con la voz.</li>
@@ -56,7 +82,9 @@
         <li><span aria-hidden="true">◐</span> Usar el modo alto contraste si ayuda.</li>
         <li><span aria-hidden="true">🐢</span> Usar reducir movimiento si el peque se sobreestimula.</li>
       </ul>
-      <p class="notice">⚠️ Esta app no reemplaza orientación profesional, terapias, consultas médicas ni evaluaciones del desarrollo. Es solo una experiencia lúdica y de estimulación suave.</p>
+      <p class="notice">⚠️ Esta app no reemplaza el juego físico, la consulta profesional, terapias, orientación médica ni evaluaciones del desarrollo. Es solo una experiencia lúdica de estimulación suave para jugar con acompañamiento adulto.</p>
+
+      <button type="button" class="btn btn-text" data-action="request-reset">Jugar de nuevo desde cero</button>
     </div>
   </section>
 
@@ -86,107 +114,215 @@
     </div>
   </section>
 
-  <!-- 4. MENÚ DE JUEGOS -->
+  <!-- 4. MENÚ PRINCIPAL -->
   <section id="screen-menu" class="screen hidden" tabindex="-1">
     <div class="menu-header">
-      <h2>Elegí un juego</h2>
+      <h2>Elegí un mundo para explorar</h2>
       <button type="button" class="btn btn-text" data-nav="screen-age">Cambiar edad</button>
     </div>
     <p class="age-current" id="menu-age-label"></p>
     <div class="games-grid">
       <article class="game-card">
-        <div class="game-icon" aria-hidden="true">🖐️</div>
-        <h3>Tocá y Descubrí</h3>
-        <p>Tocá figuras grandes y descubrí sorpresas.</p>
-        <button type="button" class="btn btn-primary" data-game="screen-game-touch">Jugar</button>
-        <span class="progress-badge" data-progress="touch" hidden>✅ Completado</span>
-      </article>
-      <article class="game-card">
-        <div class="game-icon" aria-hidden="true">🔔</div>
-        <h3>Sonidos Mágicos</h3>
-        <p>Tocá y escuchá sonidos divertidos.</p>
-        <button type="button" class="btn btn-primary" data-game="screen-game-sounds">Jugar</button>
-        <span class="progress-badge" data-progress="sounds" hidden>✅ Completado</span>
+        <div class="game-icon" aria-hidden="true">🌈</div>
+        <h3>Mundo de Colores</h3>
+        <p>Tocá colores grandes y escuchá su sonido.</p>
+        <button type="button" class="btn btn-primary" data-world="screen-world-colors">Jugar</button>
+        <span class="progress-badge" data-progress="colors" hidden>✅ Completado</span>
       </article>
       <article class="game-card">
         <div class="game-icon" aria-hidden="true">🐾</div>
-        <h3>Encontrá el Animalito</h3>
-        <p>Buscá al animalito que te nombramos.</p>
-        <button type="button" class="btn btn-primary" data-game="screen-game-animal">Jugar</button>
-        <span class="progress-badge" data-progress="animal" hidden>✅ Completado</span>
+        <h3>Mundo de Animalitos</h3>
+        <p>Explorá, buscá y escuchá animalitos.</p>
+        <button type="button" class="btn btn-primary" data-world="screen-world-animals">Jugar</button>
+        <span class="progress-badge" data-progress="animals" hidden>✅ Completado</span>
+      </article>
+      <article class="game-card">
+        <div class="game-icon" aria-hidden="true">🔔</div>
+        <h3>Mundo de Sonidos</h3>
+        <p>Tocá, escuchá y probá la memoria sonora.</p>
+        <button type="button" class="btn btn-primary" data-world="screen-world-sounds">Jugar</button>
+        <span class="progress-badge" data-progress="sounds" hidden>✅ Completado</span>
       </article>
       <article class="game-card">
         <div class="game-icon" aria-hidden="true">🧩</div>
-        <h3>Parejas de Formas</h3>
-        <p>Encontrá dos formas iguales.</p>
-        <button type="button" class="btn btn-primary" data-game="screen-game-shapes">Jugar</button>
+        <h3>Mundo de Formas</h3>
+        <p>Explorá, encontrá y armá parejas de formas.</p>
+        <button type="button" class="btn btn-primary" data-world="screen-world-shapes">Jugar</button>
         <span class="progress-badge" data-progress="shapes" hidden>✅ Completado</span>
       </article>
+      <article class="game-card">
+        <div class="game-icon" aria-hidden="true">🎵</div>
+        <h3>Modo Canción</h3>
+        <p>Encendé una canción alegre, suave o de animalitos.</p>
+        <button type="button" class="btn btn-primary" data-world="screen-song-mode">Entrar</button>
+      </article>
+      <article class="game-card">
+        <div class="game-icon" aria-hidden="true">☁️</div>
+        <h3>Modo Calma</h3>
+        <p>Un momento tranquilo para respirar juntos.</p>
+        <button type="button" class="btn btn-primary" data-world="screen-calm-mode">Entrar</button>
+      </article>
+      <article class="game-card">
+        <div class="game-icon" aria-hidden="true">🚶</div>
+        <h3>Mini Recorrido Sensorial</h3>
+        <p>Un paseo guiado de 5 pasitos por todos los mundos.</p>
+        <button type="button" class="btn btn-primary" data-world="screen-journey">Empezar</button>
+        <span class="progress-badge" data-progress="journey" hidden>✅ Completado</span>
+      </article>
+      <article class="game-card">
+        <div class="game-icon" aria-hidden="true">🏆</div>
+        <h3>Diploma</h3>
+        <p>Mirá tu diploma de gran explorador/a sensorial.</p>
+        <button type="button" class="btn btn-primary" id="btn-diploma">Ver</button>
+      </article>
     </div>
-    <button type="button" class="btn btn-secondary btn-large" id="btn-diploma">Ver mi diploma 🎉</button>
+    <button type="button" class="btn btn-secondary btn-large" data-action="request-reset">Jugar de nuevo desde cero</button>
   </section>
 
-  <!-- 5. JUEGO 1: TOCÁ Y DESCUBRÍ -->
-  <section id="screen-game-touch" class="screen hidden" tabindex="-1">
+  <!-- 5. MUNDO DE COLORES -->
+  <section id="screen-world-colors" class="screen hidden" tabindex="-1">
     <button type="button" class="btn btn-back no-print" data-nav="screen-menu">← Volver al menú</button>
-    <h2>Tocá y Descubrí</h2>
-    <p class="game-instructions">Tocá una figura</p>
-    <div class="figures-board" id="touch-board"></div>
-    <p class="game-message" id="touch-message" aria-live="polite"></p>
+    <h2>Mundo de Colores</h2>
+    <div class="mode-switcher" id="colors-modes"></div>
+    <p class="game-instructions" id="colors-instructions">Tocá un color</p>
+    <button type="button" class="btn btn-secondary" id="btn-colors-listen" hidden>🔊 Escuchar</button>
+    <div class="colors-board" id="colors-board"></div>
+    <p class="game-message" id="colors-message" aria-live="polite"></p>
   </section>
 
-  <!-- 6. JUEGO 2: SONIDOS MÁGICOS -->
-  <section id="screen-game-sounds" class="screen hidden" tabindex="-1">
+  <!-- 6. MUNDO DE ANIMALITOS -->
+  <section id="screen-world-animals" class="screen hidden" tabindex="-1">
     <button type="button" class="btn btn-back no-print" data-nav="screen-menu">← Volver al menú</button>
-    <h2>Sonidos Mágicos</h2>
-    <p class="game-instructions">Escuchá el sonido</p>
-    <p class="game-hint" id="sounds-hint" hidden>Escuchá y tocá otra vez el sonido que más te gustó.</p>
+    <h2>Mundo de Animalitos</h2>
+    <div class="mode-switcher" id="animals-modes"></div>
+    <p class="game-instructions" id="animals-prompt">Tocá un animalito</p>
+    <button type="button" class="btn btn-secondary" id="btn-animals-listen" hidden>🔊 Escuchar</button>
+    <div class="animal-board" id="animals-board"></div>
+    <p class="game-message" id="animals-message" aria-live="polite"></p>
+  </section>
+
+  <!-- 7. MUNDO DE SONIDOS -->
+  <section id="screen-world-sounds" class="screen hidden" tabindex="-1">
+    <button type="button" class="btn btn-back no-print" data-nav="screen-menu">← Volver al menú</button>
+    <h2>Mundo de Sonidos</h2>
+    <div class="mode-switcher" id="sounds-modes"></div>
+    <p class="game-instructions" id="sounds-instructions">Escuchá el sonido</p>
+    <div class="memory-controls" id="memory-controls" hidden>
+      <button type="button" class="btn btn-secondary" id="btn-memory-play">▶️ Escuchar secuencia</button>
+    </div>
     <div class="sounds-board" id="sounds-board"></div>
     <p class="game-message" id="sounds-message" aria-live="polite"></p>
   </section>
 
-  <!-- 7. JUEGO 3: ENCONTRÁ EL ANIMALITO -->
-  <section id="screen-game-animal" class="screen hidden" tabindex="-1">
+  <!-- 8. MUNDO DE FORMAS -->
+  <section id="screen-world-shapes" class="screen hidden" tabindex="-1">
     <button type="button" class="btn btn-back no-print" data-nav="screen-menu">← Volver al menú</button>
-    <h2>Encontrá el Animalito</h2>
-    <p class="game-instructions" id="animal-prompt">Buscá el animalito</p>
-    <div class="animal-board" id="animal-board"></div>
-    <p class="game-message" id="animal-message" aria-live="polite"></p>
-  </section>
-
-  <!-- 8. JUEGO 4: PAREJAS DE FORMAS -->
-  <section id="screen-game-shapes" class="screen hidden" tabindex="-1">
-    <button type="button" class="btn btn-back no-print" data-nav="screen-menu">← Volver al menú</button>
-    <h2>Parejas de Formas</h2>
+    <h2>Mundo de Formas</h2>
+    <div class="mode-switcher" id="shapes-modes"></div>
     <p class="game-instructions" id="shapes-instructions">Encontrá la pareja</p>
     <div class="shapes-board" id="shapes-board"></div>
     <p class="game-message" id="shapes-message" aria-live="polite"></p>
   </section>
 
-  <!-- 9. PANTALLA FINAL / DIPLOMA -->
+  <!-- 9. MODO CANCIÓN -->
+  <section id="screen-song-mode" class="screen hidden" tabindex="-1">
+    <button type="button" class="btn btn-back no-print" data-nav="screen-menu">← Volver al menú</button>
+    <h2>Modo Canción 🎵</h2>
+    <p class="game-instructions">Elegí una canción y encendela cuando quieras.</p>
+    <div class="song-tracks">
+      <button type="button" class="btn btn-secondary song-track-btn" data-track="alegre">Canción alegre</button>
+      <button type="button" class="btn btn-secondary song-track-btn" data-track="suave">Canción suave</button>
+      <button type="button" class="btn btn-secondary song-track-btn" data-track="animalitos">Canción de animalitos</button>
+    </div>
+    <div class="song-controls">
+      <button type="button" class="btn btn-primary" id="btn-song-on">▶️ Encender canción</button>
+      <button type="button" class="btn btn-secondary" id="btn-song-off">⏹️ Apagar canción</button>
+    </div>
+    <p class="game-message" id="song-status" aria-live="polite">Sin música por ahora.</p>
+  </section>
+
+  <!-- 10. MODO CALMA -->
+  <section id="screen-calm-mode" class="screen hidden" tabindex="-1">
+    <button type="button" class="btn btn-back no-print" data-nav="screen-menu">← Volver al menú</button>
+    <div class="calm-scene">
+      <span class="calm-cloud" aria-hidden="true">☁️</span>
+      <span class="calm-moon" aria-hidden="true">🌙</span>
+      <span class="calm-bubble calm-bubble-1" aria-hidden="true">🫧</span>
+      <span class="calm-bubble calm-bubble-2" aria-hidden="true">🫧</span>
+      <div class="breathing-circle" id="breathing-circle">
+        <span id="breathing-label">Respirar juntitos</span>
+      </div>
+    </div>
+    <p class="calm-text">Bajamos un poquito la energía.</p>
+    <p class="calm-text">Respiramos suave.</p>
+    <p class="calm-text">Un momento tranquilo para compartir.</p>
+    <div class="song-controls">
+      <button type="button" class="btn btn-primary" id="btn-breathe-toggle">Respirar juntitos</button>
+      <button type="button" class="btn btn-secondary" id="btn-calm-melody">🎶 Melodía calma</button>
+      <button type="button" class="btn btn-secondary" id="btn-calm-mute">🔇 Apagar sonido</button>
+    </div>
+  </section>
+
+  <!-- 11. MINI RECORRIDO SENSORIAL -->
+  <section id="screen-journey" class="screen hidden" tabindex="-1">
+    <button type="button" class="btn btn-back no-print" data-nav="screen-menu">← Volver al menú</button>
+    <h2>Mini Recorrido Sensorial 🚶</h2>
+    <div class="journey-progress" role="progressbar" aria-valuemin="1" aria-valuemax="5" aria-label="Progreso del recorrido">
+      <div class="journey-bar-fill" id="journey-bar-fill"></div>
+    </div>
+    <p class="journey-step-label" id="journey-step-label">Paso 1 de 5</p>
+    <div id="journey-step-content"></div>
+    <p class="game-message" id="journey-message" aria-live="polite"></p>
+  </section>
+
+  <!-- 12. PANTALLA FINAL / DIPLOMA -->
   <section id="screen-final" class="screen hidden" tabindex="-1">
-    <div class="card diploma" id="diploma">
-      <p class="diploma-icons" aria-hidden="true">⭐ ❤️ 🔔 🦆</p>
-      <h2>¡Gran explorador/a! 🏆</h2>
-      <p>Hoy jugaste, descubriste formas, escuchaste sonidos y compartiste un momento especial.</p>
+    <div id="diploma-locked" hidden>
+      <div class="card">
+        <p>Todavía te faltan algunas actividades para desbloquear el diploma. ¡Seguí explorando los mundos o hacé el Mini Recorrido Sensorial!</p>
+        <button type="button" class="btn btn-primary no-print" data-world="screen-journey">Ir al Mini Recorrido Sensorial</button>
+        <button type="button" class="btn btn-secondary no-print" data-nav="screen-menu">Volver al menú</button>
+      </div>
     </div>
-    <div class="actions no-print">
-      <button type="button" class="btn btn-primary" id="btn-play-again">Jugar otra vez</button>
-      <button type="button" class="btn btn-secondary" data-nav="screen-menu">Volver al menú</button>
-      <button type="button" class="btn btn-secondary" id="btn-print">Descargar diploma 🖨️</button>
-    </div>
-    <div class="cta-section no-print">
-      <h3>¿Querés una versión personalizada para tu marca?</h3>
-      <p>Podemos adaptar esta experiencia con tu logo, colores, juegos, regalos digitales y botón directo a WhatsApp.</p>
-      <a class="btn btn-whatsapp" id="cta-whatsapp" href="#" target="_blank" rel="noopener noreferrer">Consultar por WhatsApp 💬</a>
+    <div id="diploma-unlocked" hidden>
+      <div class="card diploma" id="diploma">
+        <p class="diploma-icons" aria-hidden="true">⭐ ❤️ 🔔 🦆</p>
+        <h2>¡Gran explorador/a sensorial! 🏆</h2>
+        <p>Hoy descubriste colores, sonidos, formas y animalitos. Gracias por jugar y compartir este momento.</p>
+        <p class="diploma-brand">Mini Mundo Sensorial · Filmarte Escuela Creativa</p>
+        <p class="diploma-dev">Desarrollado por Digital Carmelo</p>
+      </div>
+      <div class="actions no-print">
+        <button type="button" class="btn btn-primary" data-action="request-reset">Jugar de nuevo desde cero</button>
+        <button type="button" class="btn btn-secondary" data-nav="screen-menu">Volver al menú</button>
+        <button type="button" class="btn btn-secondary" id="btn-print">Imprimir diploma 🖨️</button>
+        <button type="button" class="btn btn-secondary" data-world="screen-calm-mode">Modo calma</button>
+      </div>
+      <div class="cta-section no-print">
+        <h3>¿Querés una versión personalizada para tu marca?</h3>
+        <p>Podemos adaptar esta experiencia con tu logo, colores, juegos, música, regalos digitales y botón directo a WhatsApp.</p>
+        <a class="btn btn-whatsapp" id="cta-whatsapp" href="#" target="_blank" rel="noopener noreferrer">Consultar por WhatsApp 💬</a>
+      </div>
     </div>
   </section>
 
 </main>
 
 <footer class="app-footer no-print">
-  <p>Hecho con 💛 para peques curiosos · <button type="button" class="link-btn" data-nav="screen-guide">Guía para adultos</button></p>
+  <p>Hecho con 💛 por Filmarte Escuela Creativa · Desarrollado por Digital Carmelo · <button type="button" class="link-btn" data-nav="screen-guide">Guía para adultos</button></p>
 </footer>
+
+<!-- Modal de confirmación de reinicio -->
+<div id="reset-confirm" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="reset-confirm-title">
+  <div class="modal-box">
+    <p id="reset-confirm-title" class="modal-title">¿Querés empezar de nuevo?</p>
+    <p>Se borrará el progreso de esta partida, pero se mantendrán tus preferencias.</p>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-primary" id="btn-reset-confirm">Sí, empezar de nuevo</button>
+      <button type="button" class="btn btn-secondary" id="btn-reset-cancel">Cancelar</button>
+    </div>
+  </div>
+</div>
 
 <script src="script.js"></script>
 </body>
