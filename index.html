@@ -4,8 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Mini Mundo Sensorial · Filmarte Escuela Creativa</title>
-<meta name="description" content="Mini Mundo Sensorial, una experiencia de Filmarte Escuela Creativa: colores, animalitos, sonidos, formas, canciones y un momento de calma para jugar con peques de 0 a 3 años en compañía de un adulto. Sin datos personales, sin internet necesario.">
+<meta name="description" content="Mini Mundo Sensorial: una app web tierna e inclusiva para jugar con peques de 0 a 3 años, pensada para el Día del Niño y usable todo el año. Para familias, jardines maternales y emprendedores infantiles que quieran su propia versión personalizada.">
 <meta name="theme-color" content="#FF8A65">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -38,11 +41,39 @@
 
   <!-- 1. BIENVENIDA -->
   <section id="screen-welcome" class="screen" tabindex="-1">
+    <div class="hero-scene" aria-hidden="true">
+      <div class="hero-sun"></div>
+      <div class="hero-cloud hc1"></div>
+      <div class="hero-cloud hc2"></div>
+      <div class="hero-cloud hc3"></div>
+    </div>
     <div class="card hero">
-      <p class="brand-kicker">Una experiencia de Filmarte Escuela Creativa</p>
+      <p class="brand-kicker" id="brand-kicker">Una experiencia de Filmarte Escuela Creativa</p>
       <h1 id="welcome-title">Mini Mundo Sensorial 🌈</h1>
       <p class="subtitle">Ocho mundos simples, coloridos y sonoros para compartir con peques de 0 a 3 años.</p>
       <p class="intro-text">Una experiencia para jugar con acompañamiento adulto: tocar colores, escuchar animalitos, descubrir formas, cantar y respirar juntos.</p>
+
+      <div class="mascot-wrap">
+        <svg class="mascot-svg" viewBox="0 0 220 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Tuqui, el tucán mascota">
+          <ellipse cx="150" cy="150" rx="18" ry="55" fill="#2B2438" transform="rotate(18 150 150)"/>
+          <ellipse cx="105" cy="140" rx="58" ry="68" fill="#2B2438"/>
+          <ellipse cx="98" cy="155" rx="34" ry="42" fill="#FFF3DC"/>
+          <ellipse cx="130" cy="150" rx="22" ry="38" fill="#221C2C" transform="rotate(10 130 150)"/>
+          <rect x="90" y="205" width="8" height="18" rx="3" fill="#FF6F59"/>
+          <rect x="112" y="205" width="8" height="18" rx="3" fill="#FF6F59"/>
+          <circle cx="90" cy="78" r="46" fill="#2B2438"/>
+          <circle cx="72" cy="70" r="13" fill="#FFF3DC"/>
+          <circle cx="70" cy="71" r="6" fill="#2B2438"/>
+          <circle cx="68" cy="69" r="2" fill="#fff"/>
+          <path d="M44 74 Q10 66 4 78 Q10 90 44 84 Z" fill="#FFC94A"/>
+          <path d="M44 68 Q22 58 12 62 Q18 76 44 76 Z" fill="#FF9F43"/>
+          <path d="M44 90 Q20 96 12 92 Q20 80 44 82 Z" fill="#4FC3F7"/>
+          <path d="M44 60 Q30 46 22 48 Q28 60 44 66 Z" fill="#7FC49A"/>
+          <path d="M60 34 Q66 14 82 26 Q78 8 96 18 Q92 2 108 14" stroke="#2B2438" stroke-width="7" fill="none" stroke-linecap="round"/>
+        </svg>
+        <p class="mascot-bubble">¡Hola! Soy <strong id="mascot-name-label">Tuqui</strong> 👋</p>
+      </div>
+
       <button type="button" id="player-badge" class="player-badge" data-nav="screen-players" aria-label="Elegir jugador">
         <span class="player-badge-avatar" id="player-badge-avatar">👶</span>
         <span class="player-badge-name" id="player-badge-name">Elegir jugador</span>
@@ -62,6 +93,23 @@
       <button type="button" class="btn btn-back no-print" data-nav="screen-welcome">← Volver</button>
       <h2>Guía para adultos 👪</h2>
       <p>Mini Mundo Sensorial está pensado para jugar en compañía de una persona adulta. La idea es compartir, nombrar colores, formas, sonidos y celebrar cada descubrimiento.</p>
+
+      <h3>¿Para quién es Mini Mundo Sensorial?</h3>
+      <div class="audience-grid">
+        <div class="audience-card">
+          <span class="audience-icon" aria-hidden="true">👨‍👩‍👧</span>
+          <p><strong>Familias</strong><br>Padres, madres y abuelos que buscan un momento de juego simple y tierno en casa.</p>
+        </div>
+        <div class="audience-card">
+          <span class="audience-icon" aria-hidden="true">🏫</span>
+          <p><strong>Jardines maternales</strong><br>Con perfiles de jugador para varios peques en el mismo dispositivo.</p>
+        </div>
+        <div class="audience-card">
+          <span class="audience-icon" aria-hidden="true">💡</span>
+          <p><strong>Emprendedores infantiles</strong><br>Una experiencia digital lista para sumar a tu propuesta, con tu marca.</p>
+        </div>
+      </div>
+      <p class="notice business-notice">🚀 ¿Tenés un jardín, un espacio infantil o una marca y querés tu propia versión de Mini Mundo Sensorial (con tu nombre, tus colores y tu mascota)? <a href="#" id="guide-business-link" class="link-btn" target="_blank" rel="noopener noreferrer">Conocé cómo personalizarla</a>.</p>
 
       <h3>Recomendaciones según la edad</h3>
       <div class="guide-age-block">
