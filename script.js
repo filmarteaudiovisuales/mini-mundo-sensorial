@@ -7,9 +7,49 @@
 (() => {
   'use strict';
 
-  /* ---------- EDITÁ ACÁ EL NÚMERO DE WHATSAPP ---------- */
-  const WHATSAPP_NUMBER = '5491176508119'; // formato: código país + número, sin espacios ni signos
-  const WHATSAPP_MESSAGE = 'Hola! Vi Mini Mundo Sensorial y quiero una versión personalizada 💛';
+  /* ============================================================
+     CONFIGURACIÓN DE MARCA (WHITE-LABEL)
+     ------------------------------------------------------------
+     Para vender una versión personalizada a un jardín, marca o
+     emprendimiento: cambiá SOLO estos valores (nombre, colores,
+     mascota, WhatsApp) y toda la app se actualiza sola. No hace
+     falta tocar el resto del código para cada cliente nuevo.
+     ============================================================ */
+  const BRAND_CONFIG = {
+    appName: 'Mini Mundo Sensorial',
+    schoolName: 'Filmarte Escuela Creativa',
+    developerCredit: 'Digital Carmelo',
+    mascotName: 'Tuqui',
+    colorPrimary: '#FF8A65',
+    colorPrimaryDark: '#E96B45',
+    colorSecondary: '#4FC3F7',
+    colorSecondaryDark: '#2FA9E0',
+    colorAccent: '#FFD54F',
+    whatsappNumber: '5490000000000', // código país + número, sin espacios ni signos
+    whatsappMessage: 'Hola! Vi Mini Mundo Sensorial y quiero una versión personalizada 💛'
+  };
+
+  function applyBrandConfig() {
+    const root = document.documentElement.style;
+    root.setProperty('--color-primary', BRAND_CONFIG.colorPrimary);
+    root.setProperty('--color-primary-dark', BRAND_CONFIG.colorPrimaryDark);
+    root.setProperty('--color-secondary', BRAND_CONFIG.colorSecondary);
+    root.setProperty('--color-secondary-dark', BRAND_CONFIG.colorSecondaryDark);
+    root.setProperty('--color-accent', BRAND_CONFIG.colorAccent);
+
+    document.title = `${BRAND_CONFIG.appName} · ${BRAND_CONFIG.schoolName}`;
+
+    const brandKicker = document.getElementById('brand-kicker');
+    if (brandKicker) brandKicker.textContent = `Una experiencia de ${BRAND_CONFIG.schoolName}`;
+
+    const mascotLabel = document.getElementById('mascot-name-label');
+    if (mascotLabel) mascotLabel.textContent = BRAND_CONFIG.mascotName;
+
+    document.querySelectorAll('.brand span').forEach((el) => { el.textContent = BRAND_CONFIG.schoolName; });
+    document.querySelectorAll('.dev-credit, .diploma-dev').forEach((el) => {
+      el.textContent = `Desarrollado por ${BRAND_CONFIG.developerCredit}`;
+    });
+  }
 
   /* ---------- Claves de localStorage (sin datos sensibles) ---------- */
   const KEYS = {
@@ -1809,14 +1849,18 @@
   }
 
   /* ============================================================
-     CTA WHATSAPP (editable arriba en WHATSAPP_NUMBER)
+     CTA WHATSAPP (editable en BRAND_CONFIG, arriba del archivo)
      ============================================================ */
+  const waHref = `https://wa.me/${BRAND_CONFIG.whatsappNumber}?text=${encodeURIComponent(BRAND_CONFIG.whatsappMessage)}`;
   const waLink = document.getElementById('cta-whatsapp');
-  waLink.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
+  if (waLink) waLink.href = waHref;
+  const guideBusinessLink = document.getElementById('guide-business-link');
+  if (guideBusinessLink) guideBusinessLink.href = waHref;
 
   /* ============================================================
      INICIALIZACIÓN
      ============================================================ */
+  applyBrandConfig();
   applyPreferences();
   updateBgMusicPlayback();
   setupAvatarPicker();
