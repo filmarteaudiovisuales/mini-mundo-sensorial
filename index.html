@@ -26,6 +26,9 @@
     <button type="button" id="btn-motion" class="tool-btn" aria-pressed="false" aria-label="Activar reducir movimiento">
       <span class="tool-icon" aria-hidden="true">🐢</span><span class="tool-text">Movimiento</span>
     </button>
+    <button type="button" id="btn-voice" class="tool-btn" aria-pressed="true" aria-label="Voz activada. Tocar para silenciar">
+      <span class="tool-icon" aria-hidden="true">🗣️</span><span class="tool-text">Voz</span>
+    </button>
   </div>
 </header>
 
@@ -40,6 +43,11 @@
       <h1 id="welcome-title">Mini Mundo Sensorial 🌈</h1>
       <p class="subtitle">Ocho mundos simples, coloridos y sonoros para compartir con peques de 0 a 3 años.</p>
       <p class="intro-text">Una experiencia para jugar con acompañamiento adulto: tocar colores, escuchar animalitos, descubrir formas, cantar y respirar juntos.</p>
+      <button type="button" id="player-badge" class="player-badge" data-nav="screen-players" aria-label="Elegir jugador">
+        <span class="player-badge-avatar" id="player-badge-avatar">👶</span>
+        <span class="player-badge-name" id="player-badge-name">Elegir jugador</span>
+        <span class="player-badge-stars">⭐ <span id="player-badge-stars">0</span></span>
+      </button>
       <div class="actions">
         <button type="button" id="btn-start" class="btn btn-primary btn-large">Empezar a jugar ▶</button>
         <button type="button" class="btn btn-secondary btn-large" data-nav="screen-guide">Guía para adultos 📖</button>
@@ -114,6 +122,23 @@
           <span class="age-title">2 a 3 años</span>
           <span class="age-desc">Más figuras, más animalitos y pequeños desafíos.</span>
         </button>
+      </div>
+      <button type="button" class="btn btn-text" data-nav="screen-welcome">← Volver al inicio</button>
+    </div>
+  </section>
+
+  <!-- 3B. JUGADORES -->
+  <section id="screen-players" class="screen hidden" tabindex="-1">
+    <div class="card">
+      <h2>👶 ¿Quién está jugando?</h2>
+      <p>Elegí tu nombre y tu avatar, o creá uno nuevo.</p>
+      <div id="players-list" class="players-list"></div>
+
+      <div class="new-player-box">
+        <p class="new-player-label">Nuevo jugador:</p>
+        <input id="new-player-name" type="text" placeholder="Nombre" maxlength="15" class="new-player-input">
+        <div class="avatar-picker" id="avatar-picker"></div>
+        <button type="button" class="btn btn-primary" id="btn-create-player">Crear jugador</button>
       </div>
       <button type="button" class="btn btn-text" data-nav="screen-welcome">← Volver al inicio</button>
     </div>
