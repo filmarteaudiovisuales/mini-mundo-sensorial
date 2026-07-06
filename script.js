@@ -268,15 +268,63 @@
      Nativa del navegador, sin costo ni archivos, en español. Se
      puede apagar con el botón "Voz" de la barra superior. Distinta
      del botón "Sonido" (que controla los efectos/música).
+
+     Elegimos automáticamente la mejor voz FEMENINA en español
+     disponible en el dispositivo, con un tono cálido y alegre
+     (tipo seño de jardín): pitch más agudo, ritmo relajado.
+     Cada navegador/celular trae voces distintas instaladas, así
+     que el resultado varía un poco de un dispositivo a otro, pero
+     siempre prioriza español + femenina cuando existe.
      ============================================================ */
+  const FEMALE_VOICE_HINTS = ['female', 'mujer', 'feminin', 'paulina', 'monica', 'mónica', 'lucia', 'lucía', 'helena', 'elvira', 'sabina', 'laura', 'catalina', 'esperanza', 'google español', 'microsoft sabina', 'microsoft helena', 'microsoft laura'];
+  const MALE_VOICE_HINTS = ['male', 'hombre', 'masculin', 'diego', 'jorge', 'carlos', 'pablo', 'jorge', 'juan'];
+
+  let cachedVoice = null;
+  let voicesReady = false;
+
+  function scoreVoice(voice) {
+    const lang = (voice.lang || '').toLowerCase();
+    const name = (voice.name || '').toLowerCase();
+    let score = 0;
+    if (lang.startsWith('es')) score += 10;
+    if (lang === 'es-ar') score += 6; // acento rioplatense, el más cercano
+    else if (lang === 'es-419' || lang === 'es-us' || lang === 'es-mx') score += 3;
+    if (FEMALE_VOICE_HINTS.some((hint) => name.includes(hint))) score += 8;
+    if (MALE_VOICE_HINTS.some((hint) => name.includes(hint))) score -= 8;
+    if (voice.localService) score += 1; // suele sonar mejor que la remota
+    return score;
+  }
+
+  function pickBestVoice() {
+    if (!('speechSynthesis' in window)) return null;
+    const voices = window.speechSynthesis.getVoices();
+    if (!voices || voices.length === 0) return null;
+    const spanish = voices.filter((v) => (v.lang || '').toLowerCase().startsWith('es'));
+    const pool = spanish.length ? spanish : voices;
+    return pool.slice().sort((a, b) => scoreVoice(b) - scoreVoice(a))[0] || null;
+  }
+
+  function refreshVoice() {
+    cachedVoice = pickBestVoice();
+    voicesReady = true;
+  }
+
+  if ('speechSynthesis' in window) {
+    refreshVoice();
+    window.speechSynthesis.addEventListener('voiceschanged', refreshVoice);
+  }
+
   function speak(text) {
     if (!state.voice) return;
     if (!('speechSynthesis' in window)) return;
+    if (!voicesReady) refreshVoice();
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'es-AR';
-    utterance.rate = 0.9;
-    utterance.pitch = 1.15;
+    if (cachedVoice) utterance.voice = cachedVoice;
+    utterance.rate = 0.95;   // relajado, ni apurada ni lenta
+    utterance.pitch = 1.35;  // agudo y cálido, tono alegre de seño
+    utterance.volume = 1;
     window.speechSynthesis.speak(utterance);
   }
 
