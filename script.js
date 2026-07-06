@@ -8,7 +8,7 @@
   'use strict';
 
   /* ---------- EDITÁ ACÁ EL NÚMERO DE WHATSAPP ---------- */
-  const WHATSAPP_NUMBER = '5490000000000'; // formato: código país + número, sin espacios ni signos
+  const WHATSAPP_NUMBER = '5491176508119'; // formato: código país + número, sin espacios ni signos
   const WHATSAPP_MESSAGE = 'Hola! Vi Mini Mundo Sensorial y quiero una versión personalizada 💛';
 
   /* ---------- Claves de localStorage (sin datos sensibles) ---------- */
@@ -16,10 +16,15 @@
     age: 'mms_age',
     sound: 'mms_sound',
     music: 'mms_music',
+    voice: 'mms_voice',
     contrast: 'mms_contrast',
     motion: 'mms_reduceMotion',
-    data: 'mms_progress'
+    data: 'mms_progress',
+    players: 'mms_players',
+    activePlayer: 'mms_active_player'
   };
+
+  const AVATARS = ['👶', '👧', '👦', '🧒', '👸', '🤴', '🐻', '🦁', '🐰', '🌟'];
 
   const AGE_RANK = { '0-12': 0, '1-2': 1, '2-3': 2 };
   const AGE_LABELS = { '0-12': '0 a 12 meses', '1-2': '1 a 2 años', '2-3': '2 a 3 años' };
@@ -53,14 +58,26 @@
     }
   }
 
+  function safeParsePlayers(json) {
+    try {
+      const parsed = JSON.parse(json);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
   /* ---------- Estado en memoria (reflejo de localStorage) ---------- */
   const state = {
     age: localStorage.getItem(KEYS.age) || null,
     sound: localStorage.getItem(KEYS.sound) !== 'false',
     music: localStorage.getItem(KEYS.music) !== 'false',
+    voice: localStorage.getItem(KEYS.voice) !== 'false',
     contrast: localStorage.getItem(KEYS.contrast) === 'true',
     motion: localStorage.getItem(KEYS.motion) === 'true',
     data: safeParseData(localStorage.getItem(KEYS.data)),
+    players: safeParsePlayers(localStorage.getItem(KEYS.players)),
+    activePlayerId: localStorage.getItem(KEYS.activePlayer) || null,
     songSelected: null
   };
 
@@ -75,14 +92,152 @@
   }
 
   function markProgress(key) {
+    const wasAlreadyDone = state.data.progress[key];
     state.data.progress[key] = true;
     saveData();
     updateProgressBadges();
+    if (!wasAlreadyDone) addStars(1);
   }
 
   function incrementActivities() {
     state.data.activities += 1;
     saveData();
+  }
+
+  /* ============================================================
+     JUGADORES (avatar + estrellas) — guardado local por dispositivo
+     ------------------------------------------------------------
+     No hay backend: cada tablet/celular guarda sus propios
+     jugadores en localStorage. Si en algún momento se necesita que
+     las estrellas se sincronicen entre varios dispositivos, hace
+     falta sumar un servicio externo (Firebase, Supabase, etc.) —
+     eso es un proyecto aparte.
+     ============================================================ */
+  function savePlayers() {
+    localStorage.setItem(KEYS.players, JSON.stringify(state.players));
+  }
+
+  function getActivePlayer() {
+    return state.players.find((p) => p.id === state.activePlayerId) || null;
+  }
+
+  function createPlayer(name, avatar) {
+    const player = {
+      id: 'p_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
+      name: name.slice(0, 15),
+      avatar: avatar || '👶',
+      stars: 0
+    };
+    state.players.push(player);
+    savePlayers();
+    selectPlayer(player.id);
+    renderPlayersList();
+  }
+
+  function selectPlayer(id) {
+    state.activePlayerId = id;
+    localStorage.setItem(KEYS.activePlayer, id);
+    updatePlayerBadge();
+  }
+
+  function addStars(amount) {
+    const player = getActivePlayer();
+    if (!player) return;
+    player.stars = (player.stars || 0) + amount;
+    savePlayers();
+    updatePlayerBadge();
+  }
+
+  function updatePlayerBadge() {
+    const badge = document.getElementById('player-badge');
+    const avatarEl = document.getElementById('player-badge-avatar');
+    const nameEl = document.getElementById('player-badge-name');
+    const starsEl = document.getElementById('player-badge-stars');
+    if (!badge) return;
+    const player = getActivePlayer();
+    if (player) {
+      avatarEl.textContent = player.avatar;
+      nameEl.textContent = player.name;
+      starsEl.textContent = String(player.stars || 0);
+    } else {
+      avatarEl.textContent = '👶';
+      nameEl.textContent = 'Elegir jugador';
+      starsEl.textContent = '0';
+    }
+  }
+
+  function renderPlayersList() {
+    const list = document.getElementById('players-list');
+    if (!list) return;
+    list.innerHTML = '';
+    if (state.players.length === 0) {
+      const empty = document.createElement('p');
+      empty.className = 'game-instructions';
+      empty.style.fontSize = '1rem';
+      empty.textContent = 'Todavía no hay jugadores. ¡Creá el primero abajo!';
+      list.appendChild(empty);
+      return;
+    }
+    state.players.forEach((p) => {
+      const row = document.createElement('button');
+      row.type = 'button';
+      row.className = 'player-row' + (p.id === state.activePlayerId ? ' selected' : '');
+      row.innerHTML = `<span class="player-row-name"><span aria-hidden="true">${p.avatar}</span> ${p.name}</span><span class="player-row-stars">⭐ ${p.stars || 0}</span>`;
+      row.addEventListener('click', () => {
+        selectPlayer(p.id);
+        showScreen(state.age ? 'screen-menu' : 'screen-age');
+        renderPlayersList();
+      });
+      list.appendChild(row);
+    });
+  }
+
+  function setupAvatarPicker() {
+    const container = document.getElementById('avatar-picker');
+    if (!container) return;
+    AVATARS.forEach((av, i) => {
+      const el = document.createElement('button');
+      el.type = 'button';
+      el.className = 'avatar-option' + (i === 0 ? ' picked' : '');
+      el.textContent = av;
+      el.setAttribute('aria-label', 'Avatar ' + av);
+      el.addEventListener('click', () => {
+        container.querySelectorAll('.avatar-option').forEach((x) => x.classList.remove('picked'));
+        el.classList.add('picked');
+      });
+      container.appendChild(el);
+    });
+  }
+
+  const btnCreatePlayer = document.getElementById('btn-create-player');
+  if (btnCreatePlayer) {
+    btnCreatePlayer.addEventListener('click', () => {
+      const input = document.getElementById('new-player-name');
+      const name = input.value.trim();
+      if (!name) { input.focus(); return; }
+      const picked = document.querySelector('.avatar-option.picked');
+      const avatar = picked ? picked.textContent : '👶';
+      createPlayer(name, avatar);
+      input.value = '';
+    });
+  }
+
+  /* ============================================================
+     VOZ — narración simple con Web Speech API (speechSynthesis)
+     ------------------------------------------------------------
+     Nativa del navegador, sin costo ni archivos, en español. Se
+     puede apagar con el botón "Voz" de la barra superior. Distinta
+     del botón "Sonido" (que controla los efectos/música).
+     ============================================================ */
+  function speak(text) {
+    if (!state.voice) return;
+    if (!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'es-AR';
+    utterance.rate = 0.9;
+    utterance.pitch = 1.15;
+    window.speechSynthesis.speak(utterance);
   }
 
   /* ============================================================
@@ -385,6 +540,7 @@
      ============================================================ */
   const btnSound = document.getElementById('btn-sound');
   const btnMusic = document.getElementById('btn-music');
+  const btnVoice = document.getElementById('btn-voice');
   const btnContrast = document.getElementById('btn-contrast');
   const btnMotion = document.getElementById('btn-motion');
 
@@ -400,6 +556,12 @@
       btnMusic.setAttribute('aria-pressed', String(state.music));
       btnMusic.querySelector('.tool-icon').textContent = state.music ? '🎵' : '🎵🚫';
       btnMusic.setAttribute('aria-label', state.music ? 'Música de fondo activada. Tocar para silenciar' : 'Música de fondo silenciada. Tocar para activar');
+    }
+
+    if (btnVoice) {
+      btnVoice.setAttribute('aria-pressed', String(state.voice));
+      btnVoice.querySelector('.tool-icon').textContent = state.voice ? '🗣️' : '🔇';
+      btnVoice.setAttribute('aria-label', state.voice ? 'Voz activada. Tocar para silenciar' : 'Voz silenciada. Tocar para activar');
     }
 
     btnContrast.setAttribute('aria-pressed', String(state.contrast));
@@ -426,6 +588,15 @@
     });
   }
 
+  if (btnVoice) {
+    btnVoice.addEventListener('click', () => {
+      state.voice = !state.voice;
+      localStorage.setItem(KEYS.voice, String(state.voice));
+      applyPreferences();
+      if (!state.voice && 'speechSynthesis' in window) window.speechSynthesis.cancel();
+    });
+  }
+
   btnContrast.addEventListener('click', () => {
     state.contrast = !state.contrast;
     localStorage.setItem(KEYS.contrast, String(state.contrast));
@@ -443,7 +614,10 @@
      ============================================================ */
   document.addEventListener('click', (e) => {
     const navEl = e.target.closest('[data-nav]');
-    if (navEl) showScreen(navEl.getAttribute('data-nav'));
+    if (!navEl) return;
+    const target = navEl.getAttribute('data-nav');
+    showScreen(target);
+    if (target === 'screen-players') renderPlayersList();
   });
 
   const WORLD_INIT = {
@@ -594,6 +768,7 @@
     if (colorsMode === 'listen') {
       instructions.textContent = 'Tocá el color que suena';
       colorsListenTarget = shown[Math.floor(Math.random() * shown.length)];
+      speak('Tocá el ' + colorsListenTarget.name);
       listenBtn.hidden = false;
       // Aseguramos que el contexto de audio esté "despierto" apenas se
       // arma el tablero, y de nuevo en cada click (fix del bug de
@@ -635,6 +810,7 @@
         void btn.offsetWidth;
         btn.classList.add('touched');
         Sounds.color(color.id);
+        speak(color.name);
         touched.add(color.id);
         setMessage(message, randomPositive());
         if (touched.size === 1) incrementActivities();
@@ -758,6 +934,7 @@
     const targetId = animalRoundQueue.shift();
     const target = animalGameOptions.find((a) => a.id === targetId);
     prompt.textContent = ANIMAL_PROMPTS[targetId] || `Buscá el ${target.label.toLowerCase()}`;
+    speak(prompt.textContent);
 
     const board = document.getElementById('animals-board');
     board.innerHTML = '';
@@ -1110,6 +1287,7 @@
     const targetId = shapesFindQueue.shift();
     const target = shapesFindOptions.find((s) => s.id === targetId);
     instructions.textContent = `Encontrá la forma: ${target.label}`;
+    speak(instructions.textContent);
 
     const board = document.getElementById('shapes-board');
     board.innerHTML = '';
@@ -1388,6 +1566,7 @@
     state.data.diplomaUnlocked = true;
     saveData();
     markProgress('journey');
+    addStars(2); // bono por completar el recorrido y desbloquear el diploma
     const content = document.getElementById('journey-step-content');
     const btn = document.createElement('button');
     btn.type = 'button';
@@ -1640,6 +1819,8 @@
      ============================================================ */
   applyPreferences();
   updateBgMusicPlayback();
+  setupAvatarPicker();
+  updatePlayerBadge();
   if (state.age) renderMenu();
   showScreen('screen-welcome');
 })();
